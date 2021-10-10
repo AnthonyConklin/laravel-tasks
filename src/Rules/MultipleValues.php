@@ -2,14 +2,10 @@
 
 namespace AnthonyConklin\LaravelTasks\Rules;
 
-
-
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class MultipleValues implements Rule
 {
-
     private $values;
 
     private $invalid = [];
@@ -39,11 +35,12 @@ class MultipleValues implements Rule
         }, $values);
         $passes = true;
         foreach ($values as $value) {
-            if (!in_array($value, $this->values)) {
+            if (! in_array($value, $this->values)) {
                 $passes = false;
                 $this->invalid[] = $value;
             }
         }
+
         return $passes;
     }
 

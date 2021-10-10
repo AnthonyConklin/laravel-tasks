@@ -2,11 +2,7 @@
 
 namespace AnthonyConklin\LaravelTasks\Rules;
 
-
-
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use SimpleXMLElement;
 
 class ValidXml implements Rule
@@ -36,14 +32,16 @@ class ValidXml implements Rule
     {
         libxml_use_internal_errors(true);
         $xml = simplexml_load_string($value);
-        if ($xml === false || !($xml instanceof SimpleXMLElement)) {
+        if ($xml === false || ! ($xml instanceof SimpleXMLElement)) {
             return false;
         }
 
         if ($this->rootNode && $xml->getName() !== $this->rootNode) {
             $this->rootNodeCorrect = false;
+
             return false;
         }
+
         return true;
     }
 
@@ -54,6 +52,6 @@ class ValidXml implements Rule
      */
     public function message()
     {
-        return !$this->rootNodeCorrect ? sprintf('Root node does not match expected: "%s"', $this->rootNode) : 'Payload is not valid XML!';
+        return ! $this->rootNodeCorrect ? sprintf('Root node does not match expected: "%s"', $this->rootNode) : 'Payload is not valid XML!';
     }
 }

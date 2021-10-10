@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 
 class XmlParser
 {
-
     public function __construct($xml, $normalizeKeys = false)
     {
         $this->xml = $xml;
@@ -27,6 +26,7 @@ class XmlParser
     public static function parseFile($file, $normalizeKeys = false)
     {
         $xml = file_get_contents($file);
+
         return self::toArray($xml, $normalizeKeys);
     }
 
@@ -35,7 +35,8 @@ class XmlParser
         $xml = simplexml_load_string($string, "SimpleXMLElement", LIBXML_NOCDATA);
         $requestType = $xml->getName();
         $json = json_encode($xml);
-        $json = json_decode($json, TRUE);
+        $json = json_decode($json, true);
+
         return collect([
             'type' => $requestType,
             'data' => self::makeCollection($json, $normalizeKeys),
@@ -51,6 +52,7 @@ class XmlParser
             if (is_array($value) && count($value) == 0) {
                 return null;
             }
+
             return $value;
         }, $array);
 
@@ -90,6 +92,5 @@ class XmlParser
 
     public static function test()
     {
-
     }
 }

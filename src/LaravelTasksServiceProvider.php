@@ -2,9 +2,9 @@
 
 namespace AnthonyConklin\LaravelTasks;
 
+use AnthonyConklin\LaravelTasks\Commands\LaravelTasksCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use AnthonyConklin\LaravelTasks\Commands\LaravelTasksCommand;
 
 class LaravelTasksServiceProvider extends PackageServiceProvider
 {

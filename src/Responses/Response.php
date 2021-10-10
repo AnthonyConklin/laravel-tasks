@@ -4,9 +4,7 @@ namespace AnthonyConklin\LaravelTasks\Responses;
 
 use AnthonyConklin\LaravelTasks\XmlOutput;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
@@ -14,9 +12,7 @@ use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\Serializer\ArraySerializer;
-use League\Fractal\Serializer\DataArraySerializer;
 use League\Fractal\TransformerAbstract;
-use Psy\Util\Json;
 
 class Response extends \Illuminate\Http\Response
 {
@@ -44,6 +40,7 @@ class Response extends \Illuminate\Http\Response
         if ($resource instanceof BaseCollection) {
             return $this->collection($resource, $transformer, $meta);
         }
+
         return $this->item($resource, $transformer, $meta);
     }
 
@@ -55,6 +52,7 @@ class Response extends \Illuminate\Http\Response
     public function setSerializer(ArraySerializer $serializer)
     {
         $this->serializer = $serializer;
+
         return $this;
     }
 
@@ -89,6 +87,7 @@ class Response extends \Illuminate\Http\Response
             $this->header('Content-Type', 'application/xml');
         }
         $this->setContent($data);
+
         return $this;
     }
 
@@ -100,6 +99,7 @@ class Response extends \Illuminate\Http\Response
         if (request()->header('Accept') === 'application/xml') {
             return true;
         }
+
         return $this->outputXml;
     }
 
@@ -113,6 +113,7 @@ class Response extends \Illuminate\Http\Response
     {
         $this->outputXml = true;
         $this->setXmlNamespace($xmlNamespace, $attributes);
+
         return $this;
     }
 
@@ -126,6 +127,7 @@ class Response extends \Illuminate\Http\Response
     {
         $this->xmlNamespace = $namespace;
         $this->setXmlNamespaceAttributes($attributes);
+
         return $this;
     }
 
@@ -137,6 +139,7 @@ class Response extends \Illuminate\Http\Response
     public function setXmlNamespaceAttributes($attributes)
     {
         $this->xmlNamespaceAttributes = $attributes;
+
         return $this;
     }
 
@@ -167,7 +170,7 @@ class Response extends \Illuminate\Http\Response
             $transformer = app($transformer);
         }
 
-        if (!($transformer instanceof TransformerAbstract)) {
+        if (! ($transformer instanceof TransformerAbstract)) {
             throw new Exception('Must provide a valid transformer that extends ' . TransformerAbstract::class);
         }
 
@@ -203,7 +206,7 @@ class Response extends \Illuminate\Http\Response
             $transformer = app($transformer);
         }
 
-        if (!($transformer instanceof TransformerAbstract)) {
+        if (! ($transformer instanceof TransformerAbstract)) {
             throw new Exception('Must provide a valid transformer that extends ' . TransformerAbstract::class);
         }
 
@@ -213,11 +216,11 @@ class Response extends \Illuminate\Http\Response
             $pagination = $resource->toArray();
             $pagination['type'] = 'paged';
             $pagination['links'] = [
-                'path'           => $pagination['path'],
+                'path' => $pagination['path'],
                 'first_page_url' => $pagination['first_page_url'],
-                'last_page_url'  => $pagination['last_page_url'],
-                'next_page_url'  => $pagination['next_page_url'],
-                'prev_page_url'  => $pagination['prev_page_url'],
+                'last_page_url' => $pagination['last_page_url'],
+                'next_page_url' => $pagination['next_page_url'],
+                'prev_page_url' => $pagination['prev_page_url'],
             ];
             unset($pagination['data']);
             foreach ($pagination as $key => $value) {
@@ -252,26 +255,27 @@ class Response extends \Illuminate\Http\Response
             'next_page_url',
             'last_page_url',
         ]);
+
         return [
-            'first'    => [
+            'first' => [
                 'cursor' => $pagination['first_page'],
-                'url'    => $pagination['first_page_url'],
+                'url' => $pagination['first_page_url'],
             ],
             'previous' => [
                 'cursor' => $pagination['previous_page'],
-                'url'    => $resource->url($pagination['previous_page']),
+                'url' => $resource->url($pagination['previous_page']),
             ],
-            'current'  => [
+            'current' => [
                 'cursor' => $pagination['current_page'],
-                'url'    => $resource->url($pagination['current_page']),
+                'url' => $resource->url($pagination['current_page']),
             ],
-            'next'     => [
+            'next' => [
                 'cursor' => $pagination['next_page'],
-                'url'    => $pagination['next_page_url'],
+                'url' => $pagination['next_page_url'],
             ],
-            'last'     => [
+            'last' => [
                 'cursor' => $pagination['last_page'],
-                'url'    => $pagination['last_page_url'],
+                'url' => $pagination['last_page_url'],
             ],
         ];
     }
@@ -280,9 +284,9 @@ class Response extends \Illuminate\Http\Response
     {
         return $this->morphToJson([
             'error' => [
-                'code'    => $code,
+                'code' => $code,
                 'message' => $message,
-                'info'    => $info,
+                'info' => $info,
             ],
         ]);
     }
@@ -295,6 +299,7 @@ class Response extends \Illuminate\Http\Response
     public function withSuccess($code = 200)
     {
         $this->setStatusCode($code);
+
         return $this;
     }
 

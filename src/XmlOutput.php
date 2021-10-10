@@ -106,7 +106,7 @@ class XmlOutput
             // get the attributes first.;
             if (array_key_exists('@attributes', $arr) && is_array($arr['@attributes'])) {
                 foreach ($arr['@attributes'] as $key => $value) {
-                    if (!self::isValidTagName($key)) {
+                    if (! self::isValidTagName($key)) {
                         throw new Exception('[Array2XML] Illegal character in attribute name. attribute: '.$key.' in node: '.$node_name);
                     }
                     $node->setAttribute($key, self::bool2str($value));
@@ -133,7 +133,7 @@ class XmlOutput
         if (is_array($arr)) {
             // recurse to get the node for that key
             foreach ($arr as $key => $value) {
-                if (!self::isValidTagName($key)) {
+                if (! self::isValidTagName($key)) {
                     throw new Exception('[XmlOutput] Illegal character in tag name. tag: '.$key.' in node: '.$node_name);
                 }
                 if (is_array($value) && is_numeric(key($value))) {
@@ -153,7 +153,7 @@ class XmlOutput
 
         // after we are done with all the keys in the array (if it is one)
         // we check if it has any text value, if yes, append it.
-        if (!is_array($arr)) {
+        if (! is_array($arr)) {
             $node->appendChild($xml->createTextNode(self::bool2str($arr)));
         }
 

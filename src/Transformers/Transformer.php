@@ -2,8 +2,6 @@
 
 namespace AnthonyConklin\LaravelTasks\Transformers;
 
-
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use League\Fractal;
 
@@ -17,46 +15,59 @@ class Transformer extends Fractal\TransformerAbstract
 
     protected $namespace = 'root';
 
-    public function __construct($includes = [], $excludes = []) {
+    public function __construct($includes = [], $excludes = [])
+    {
         $this->setIncludes($includes);
         $this->setExcludes($excludes);
     }
 
-    public function setIncludes($includes = []) {
+    public function setIncludes($includes = [])
+    {
         $this->includes = array_merge($this->getRequestIncludes(), $includes);
+
         return $this;
     }
 
-    public function getRequestIncludes() {
+    public function getRequestIncludes()
+    {
         $requestIncludes = request('include', '');
         $requestIncludes = str_replace(' ', '', $requestIncludes);
+
         return explode(',', $requestIncludes);
     }
 
-    public function getIncludes() {
+    public function getIncludes()
+    {
         return $this->includes;
     }
 
-    public function hasInclude($key) {
+    public function hasInclude($key)
+    {
         return in_array($key, $this->includes);
     }
 
-    public function setExcludes($excludes = []) {
+    public function setExcludes($excludes = [])
+    {
         $this->excludes = array_merge($this->getRequestExcludes(), $excludes);
+
         return $this;
     }
 
-    public function getRequestExcludes() {
+    public function getRequestExcludes()
+    {
         $requestExcludes = request('exclude', '');
         $requestExcludes = str_replace(' ', '', $requestExcludes);
+
         return explode(',', $requestExcludes);
     }
 
-    public function getExcludes() {
+    public function getExcludes()
+    {
         return $this->excludes;
     }
 
-    public function hasExclude($key) {
+    public function hasExclude($key)
+    {
         return in_array($key, $this->excludes);
     }
 
@@ -67,7 +78,7 @@ class Transformer extends Fractal\TransformerAbstract
     {
         return [
             'limit',
-            'order'
+            'order',
         ];
     }
 
@@ -78,16 +89,17 @@ class Transformer extends Fractal\TransformerAbstract
      * @return array
      * @throws \Exception
      */
-    public function transform($data) {
-        if (!method_exists($this, 'toArray')) {
+    public function transform($data)
+    {
+        if (! method_exists($this, 'toArray')) {
             throw new \Exception('Transformer must include a "toArray" method.');
         }
         $this->resource = $data;
 
         $result = $this->toArray($data);
-        if ($data instanceof Model && !array_key_exists('_type', $result)) {
+        if ($data instanceof Model && ! array_key_exists('_type', $result)) {
             $result = array_merge($result, [
-                '_type' => $data->getMorphClass()
+                '_type' => $data->getMorphClass(),
             ]);
         }
 
@@ -98,12 +110,12 @@ class Transformer extends Fractal\TransformerAbstract
      * @param array $includes
      * @return $this
      */
-    public function forceInclude (array $includes = []) {
+    public function forceInclude(array $includes = [])
+    {
         $this->defaultIncludes = array_merge($this->defaultIncludes, $includes);
+
         return $this;
     }
-
-
 
     /**
      * @param Fractal\ParamBag $params
@@ -114,7 +126,6 @@ class Transformer extends Fractal\TransformerAbstract
      */
     protected function validateParams(Fractal\ParamBag $params, $allowedParams = false)
     {
-
         $validParams = $allowedParams ? $allowedParams : $this->validParams();
 
         // Optional params validation
@@ -126,10 +137,12 @@ class Transformer extends Fractal\TransformerAbstract
                 implode(',', $validParams)
             ));
         }
+
         return $this;
     }
 
-    protected function user() {
+    protected function user()
+    {
         return Auth::user();
     }
 

@@ -2,10 +2,10 @@
 
 namespace AnthonyConklin\LaravelTasks\Transformers;
 
-use Illuminate\Support\Arr;
-use Illuminate\Http\Resources\MissingValue;
 use Illuminate\Http\Resources\MergeValue;
+use Illuminate\Http\Resources\MissingValue;
 use Illuminate\Http\Resources\PotentiallyMissing;
+use Illuminate\Support\Arr;
 
 trait ConditionallyLoadsAttributes
 {
@@ -30,7 +30,9 @@ trait ConditionallyLoadsAttributes
 
             if (is_numeric($key) && $value instanceof MergeValue) {
                 return $this->mergeData(
-                    $data, $index, $this->filter($value->data),
+                    $data,
+                    $index,
+                    $this->filter($value->data),
                     array_values($value->data) === $value->data
                 );
             }
@@ -108,7 +110,7 @@ trait ConditionallyLoadsAttributes
             return value($value);
         }
 
-        return func_num_args() === 3 ? value($default) : new MissingValue;
+        return func_num_args() === 3 ? value($default) : new MissingValue();
     }
 
     /**
@@ -131,7 +133,7 @@ trait ConditionallyLoadsAttributes
      */
     protected function mergeWhen($condition, $value)
     {
-        return $condition ? new MergeValue(value($value)) : new MissingValue;
+        return $condition ? new MergeValue(value($value)) : new MissingValue();
     }
 
     /**
@@ -158,7 +160,7 @@ trait ConditionallyLoadsAttributes
     protected function whenLoaded($relationship, $value = null, $default = null)
     {
         if (func_num_args() < 3) {
-            $default = new MissingValue;
+            $default = new MissingValue();
         }
 
         if (! $this->resource->relationLoaded($relationship)) {
@@ -201,7 +203,7 @@ trait ConditionallyLoadsAttributes
     protected function whenPivotLoadedAs($accessor, $table, $value, $default = null)
     {
         if (func_num_args() === 3) {
-            $default = new MissingValue;
+            $default = new MissingValue();
         }
 
         return $this->when(

@@ -2,15 +2,12 @@
 
 namespace AnthonyConklin\LaravelTasks\Rules;
 
-
-
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ValidModel implements Rule
 {
-
     /**
      * Determine if the validation rule passes.
      *
@@ -20,10 +17,11 @@ class ValidModel implements Rule
      */
     public function passes($attribute, $value)
     {
-        if($value instanceof Model){
+        if ($value instanceof Model) {
             $value = $value->getMorphClass();
         }
-        return !is_null(Relation::getMorphedModel($value));
+
+        return ! is_null(Relation::getMorphedModel($value));
     }
 
     /**

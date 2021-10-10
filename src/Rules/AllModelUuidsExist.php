@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AllModelUuidsExist implements Rule
 {
-
     private $model;
 
     private $additionalWheres;
@@ -24,15 +23,17 @@ class AllModelUuidsExist implements Rule
         $this->additionalWheres = $additionalWheres;
     }
 
-    protected function checkForDynamicModel($model) {
-        if (!is_string($model)) {
+    protected function checkForDynamicModel($model)
+    {
+        if (! is_string($model)) {
             return $model;
         }
         // Morph Model from alias
         $model = Relation::getMorphedModel($model) ?? false;
         if ($model) {
-            $model = class_exists($model) ? new $model : false;
+            $model = class_exists($model) ? new $model() : false;
         }
+
         return $model;
     }
 
@@ -45,15 +46,16 @@ class AllModelUuidsExist implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (!$this->model) {
+        if (! $this->model) {
             return false;
         }
-        $model = $this->model->whereUuid(explode(',',$value));
+        $model = $this->model->whereUuid(explode(',', $value));
         if (count($this->additionalWheres)) {
             foreach ($this->additionalWheres as $where) {
                 $model = $where($model);
             }
         }
+
         return $model->exists();
     }
 

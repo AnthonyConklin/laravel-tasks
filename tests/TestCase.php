@@ -2,9 +2,9 @@
 
 namespace AnthonyConklin\LaravelTasks\Tests;
 
+use AnthonyConklin\LaravelTasks\LaravelTasksServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use AnthonyConklin\LaravelTasks\LaravelTasksServiceProvider;
 
 class TestCase extends Orchestra
 {

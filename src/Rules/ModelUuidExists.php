@@ -2,14 +2,11 @@
 
 namespace AnthonyConklin\LaravelTasks\Rules;
 
-
-
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ModelUuidExists implements Rule
 {
-
     private $model;
 
     private $additionalWheres;
@@ -26,15 +23,17 @@ class ModelUuidExists implements Rule
         $this->additionalWheres = $additionalWheres;
     }
 
-    protected function checkForDynamicModel($model) {
-        if (!is_string($model)) {
+    protected function checkForDynamicModel($model)
+    {
+        if (! is_string($model)) {
             return $model;
         }
         // Morph Model from alias
         $model = Relation::getMorphedModel($model) ?? false;
         if ($model) {
-            $model = class_exists($model) ? new $model : false;
+            $model = class_exists($model) ? new $model() : false;
         }
+
         return $model;
     }
 
@@ -47,7 +46,7 @@ class ModelUuidExists implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (!$this->model) {
+        if (! $this->model) {
             return false;
         }
         $model = $this->model->whereUuid($value);
@@ -56,6 +55,7 @@ class ModelUuidExists implements Rule
                 $model = $where($model);
             }
         }
+
         return $model->exists();
     }
 

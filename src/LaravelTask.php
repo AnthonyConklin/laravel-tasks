@@ -7,13 +7,13 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
-use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
-use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\MassAssignmentException;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -23,15 +23,18 @@ use Illuminate\Validation\ValidationException;
 
 abstract class LaravelTask implements Arrayable
 {
+    use HasAttributes;
 
-    const CREATED_AT = false;
-    const UPDATED_AT = false;
+    use GuardsAttributes;
 
-    use HasAttributes,
-        GuardsAttributes,
-        HidesAttributes,
-        HasTimestamps,
-        ValidatesWhenResolvedTrait;
+    use HidesAttributes;
+
+    use HasTimestamps;
+
+    use ValidatesWhenResolvedTrait;
+
+    public const CREATED_AT = false;
+    public const UPDATED_AT = false;
 
 
     /**
@@ -103,21 +106,23 @@ abstract class LaravelTask implements Arrayable
      */
     public static function getTopic()
     {
-        return (new static)->topic;
+        return (new static())->topic;
     }
 
     public function setUser($user)
     {
         $this->user = $user;
+
         return $this;
     }
 
     public static function getRules($except = [])
     {
-        $rules = (new static)->getRules();
+        $rules = (new static())->getRules();
         foreach ($except as $key) {
             unset($rules[$key]);
         }
+
         return $rules;
     }
 
@@ -131,6 +136,7 @@ abstract class LaravelTask implements Arrayable
         if ($this->user) {
             return $this->user;
         }
+
         return Auth::user();
     }
 
@@ -147,7 +153,7 @@ abstract class LaravelTask implements Arrayable
         return new Client($config);
     }
 
-    public abstract function handle();
+    abstract public function handle();
 
     protected function includes(array $data = [], Model $model = null, array $except = [])
     {
@@ -160,12 +166,14 @@ abstract class LaravelTask implements Arrayable
                     return false;
                 }
             }
+
             return true;
         });
 
         if ($model) {
             $requested = array_filter($requested, function ($relation) use ($model) {
                 $relation = explode('.', $relation);
+
                 return method_exists($model, $relation[0]);
             });
         }
@@ -184,6 +192,7 @@ abstract class LaravelTask implements Arrayable
     {
         $response = $this->validate($request)->handle();
         $next($request);
+
         return $response;
     }
 
@@ -204,6 +213,7 @@ abstract class LaravelTask implements Arrayable
         } else {
             throw new Exception('Passed malformed data to transport.');
         }
+
         return $this;
     }
 
@@ -244,6 +254,7 @@ abstract class LaravelTask implements Arrayable
     public function parseFromRequest(Request $request)
     {
         $this->fill($request->all());
+
         return $this;
     }
 
@@ -259,17 +270,19 @@ abstract class LaravelTask implements Arrayable
 
     public function get($field, $default = null)
     {
-        if (!$this->has($field)) {
+        if (! $this->has($field)) {
             return $default;
         }
+
         return $this->getAttribute($field);
     }
 
     public function getRaw($field, $default = null)
     {
-        if (!$this->has($field)) {
+        if (! $this->has($field)) {
             return $default;
         }
+
         return $this->attributes[$field];
     }
 
@@ -312,6 +325,7 @@ abstract class LaravelTask implements Arrayable
     public function getFillable()
     {
         $validationFields = method_exists($this, 'rules') ? array_keys($this->rules()) : [];
+
         return array_merge($this->fillable, $validationFields);
     }
 
@@ -367,8 +381,10 @@ abstract class LaravelTask implements Arrayable
     protected function createDefaultValidator(ValidationFactory $factory)
     {
         return $factory->make(
-            $this->validationData(), $this->rules(),
-            $this->messages(), $this->attributes()
+            $this->validationData(),
+            $this->rules(),
+            $this->messages(),
+            $this->attributes()
         );
     }
 
@@ -548,6 +564,7 @@ abstract class LaravelTask implements Arrayable
     public function __invoke($request = [])
     {
         $this->validate($request);
+
         return $this->handle();
     }
 
@@ -559,6 +576,7 @@ abstract class LaravelTask implements Arrayable
     public static function run($params = [])
     {
         $task = new static();
+
         return $task($params);
     }
 }

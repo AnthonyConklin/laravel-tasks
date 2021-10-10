@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace AnthonyConklin\LaravelTasks\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelTasksCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-tasks';
 
     public $description = 'My command';
 
